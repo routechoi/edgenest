@@ -617,16 +617,16 @@ function renderAll() {
     html += `<div class="match-row${live?' live':''}${done?' done':''}">
       ${stCell}
       <div class="c-home">
-        ${n.homeLogo?`<img class='team-logo' src='${n.homeLogo}" onerror="this.style.display='none'">`:``}
+        ${n.homeLogo?`<img class='team-logo' src="${n.homeLogo}" onerror="this.style.display='none'">`:``}
         <span class="t-name">${s.icon} ${n.homeName}</span>
       </div>
       <div class="c-sc">
-        <span class="sc-main${live?' live':''}>${n.hg} : ${n.ag}</span>
+        <span class="sc-main${live?' live':''}">${n.hg} : ${n.ag}</span>
         ${n.ht&&live?`<span class='sc-sub'>HT ${n.ht}</span>`:""}
       </div>
       <div class="c-away">
         <span class="t-name">${n.awayName}</span>
-        ${n.awayLogo?`<img class='team-logo' src='${n.awayLogo}" onerror="this.style.display='none'">`:``}
+        ${n.awayLogo?`<img class='team-logo' src="${n.awayLogo}" onerror="this.style.display='none'">`:``}
       </div>
       ${evHtml}
     </div>`;
@@ -732,7 +732,7 @@ function lsRender(games, key, s) {
 
     html += `<div class="league-sec">
       <div class="league-hd" onclick="toggleSec(this)">
-        ${flag?`<img class='country-flag' src='${flag}" onerror="this.style.display='none'">`:
+        ${flag?`<img class='country-flag' src="${flag}" onerror="this.style.display='none'">`:
           logo?`<img class="league-logo" src="${logo}" onerror="this.style.display='none'">`:""}
         <span class="league-nm">${s.icon} ${lg}</span>
         ${groups[lg]?.major?`<span style='font-family:'DM Mono',monospace;font-size:.46rem;color:var(--gold2);opacity:.7'>⭐</span>`:''}
@@ -768,7 +768,7 @@ function lsRender(games, key, s) {
       html += `<div class="match-row${live?' live':''}${done?' done':''}">
         ${stCell}
         <div class="c-home">
-          ${n.homeLogo?`<img class='team-logo' src='${n.homeLogo}" onerror="this.style.display='none'">`:""}
+          ${n.homeLogo?`<img class='team-logo' src="${n.homeLogo}" onerror="this.style.display='none'">`:""}
           <span class="t-name">${n.homeName}</span>
         </div>
         <div class="c-sc">
@@ -777,7 +777,7 @@ function lsRender(games, key, s) {
         </div>
         <div class="c-away">
           <span class="t-name">${n.awayName}</span>
-          ${n.awayLogo?`<img class='team-logo' src='${n.awayLogo}" onerror="this.style.display='none'">`:""}
+          ${n.awayLogo?`<img class='team-logo' src="${n.awayLogo}" onerror="this.style.display='none'">`:""}
         </div>
         ${evHtml}
       </div>`;
