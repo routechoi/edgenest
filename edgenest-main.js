@@ -184,7 +184,7 @@ const SPORTS = [
       ag: g.goals?.away ?? "-",
       status: g.fixture?.status?.short || "",
       elapsed: g.fixture?.status?.elapsed != null ? String(g.fixture.status.elapsed) : toKST(g.fixture?.date),
-      ht: g.score?.halftime ? `${g.score.halftime.home ?? "?"}:${g.score.halftime.away ?? "?"}` : null,
+      ht: g.score?.halftime ? `${g.score.halftime.home ?? '?'}:${g.score.halftime.away ?? '?'}` : null,
       events: g.events || [],
     })
   },
@@ -532,13 +532,13 @@ function renderAllDemo() {
     const isLv = live.includes(n);
     const isDn = done.includes(n);
     let stCell;
-    if(isLv) stCell = `<div class="c-st"><span class="st-live">● LIVE</span><span class="st-min">${n.elapsed||""}</span></div>`;
+    if(isLv) stCell = `<div class="c-st"><span class="st-live">● LIVE</span><span class="st-min">${n.elapsed||''}</span></div>`;
     else if(isDn) stCell = `<div class="c-st"><span class="st-done">종료</span></div>`;
-    else stCell = `<div class="c-st"><span class="st-sched">${n.elapsed||"예정"}</span></div>`;
-    rows += `<div class="match-row${isLv?" live":""}${isDn?" done":""}">
+    else stCell = `<div class="c-st"><span class="st-sched">${n.elapsed||'예정'}</span></div>`;
+    rows += `<div class="match-row${isLv?' live':''}${isDn?' done':''}">
       ${stCell}
       <div class="c-home"><span class="t-name">${icon} ${n.homeName}</span></div>
-      <div class="c-sc"><span class="sc-main${isLv?" live":""}">${n.hg} : ${n.ag}</span>${n.ht&&isLv?`<span class="sc-sub">HT ${n.ht}</span>`:""}</div>
+      <div class="c-sc"><span class="sc-main${isLv?' live':''}">${n.hg} : ${n.ag}</span>${n.ht&&isLv?`<span class='sc-sub'>HT ${n.ht}</span>`:""}</div>
       <div class="c-away"><span class="t-name">${n.awayName}</span></div>
       <div class="c-ev"><span style="font-size:.5rem;color:var(--t3)">${n.leagueName}</span></div>
     </div>`;
@@ -601,32 +601,32 @@ function renderAll() {
     if(n.status==="HT") {
       stCell=`<div class="c-st"><span class="st-ht">HT</span></div>`;
     } else if(live) {
-      stCell=`<div class="c-st"><span class="st-live">● LIVE</span><span class="st-min">${n.elapsed||""}</span></div>`;
+      stCell=`<div class="c-st"><span class="st-live">● LIVE</span><span class="st-min">${n.elapsed||''}</span></div>`;
     } else if(done) {
       stCell=`<div class="c-st"><span class="st-done">종료</span></div>`;
     } else {
-      stCell=`<div class="c-st"><span class="st-sched">${n.elapsed||"예정"}</span></div>`;
+      stCell=`<div class="c-st"><span class="st-sched">${n.elapsed||'예정'}</span></div>`;
     }
     const goals = (n.events||[]).filter(e=>e.type==="Goal").slice(-2);
     let evHtml = `<div class="c-ev">`;
     goals.forEach(e => {
-      evHtml += `<div class="ev-item goal">⚽ ${(e.player?.name||"").split(" ").pop()} ${e.time?.elapsed||""}′</div>`;
+      evHtml += `<div class="ev-item goal">⚽ ${(e.player?.name||'').split(' ').pop()} ${e.time?.elapsed||''}′</div>`;
     });
     evHtml += `</div>`;
 
-    html += `<div class="match-row${live?" live":""}${done?" done":""}">
+    html += `<div class="match-row${live?' live':''}${done?' done':''}">
       ${stCell}
       <div class="c-home">
-        ${n.homeLogo?`<img class="team-logo" src="${n.homeLogo}" onerror="this.style.display='none'">`:``}
+        ${n.homeLogo?`<img class='team-logo' src='${n.homeLogo}" onerror="this.style.display='none'">`:``}
         <span class="t-name">${s.icon} ${n.homeName}</span>
       </div>
       <div class="c-sc">
-        <span class="sc-main${live?" live":"}">${n.hg} : ${n.ag}</span>
-        ${n.ht&&live?`<span class="sc-sub">HT ${n.ht}</span>`:""}
+        <span class="sc-main${live?' live':''}>${n.hg} : ${n.ag}</span>
+        ${n.ht&&live?`<span class='sc-sub'>HT ${n.ht}</span>`:""}
       </div>
       <div class="c-away">
         <span class="t-name">${n.awayName}</span>
-        ${n.awayLogo?`<img class="team-logo" src="${n.awayLogo}" onerror="this.style.display='none'">`:``}
+        ${n.awayLogo?`<img class='team-logo' src='${n.awayLogo}" onerror="this.style.display='none'">`:``}
       </div>
       ${evHtml}
     </div>`;
@@ -704,12 +704,12 @@ function lsRender(games, key, s) {
   // 필터
   const hasMajor = lgKeys.some(k=>groups[k].major);
   let fhtml = `<div class="filter-row"><span class="filter-lbl">리그</span>
-    <button class="fbtn ${filterLeague==="all"?"active":""}" onclick="applyFilter('all',this)">전체</button>
-    ${hasMajor?`<button class="fbtn major-btn ${filterLeague==="major"?"active":""}" onclick="applyFilter('major',this)">⭐ 주요리그${majorN?` <span style="color:var(--gold2);font-size:.5rem">${majorN}</span>`:""}</button>`:""}`;
+    <button class="fbtn ${filterLeague==='all'?'active':''}" onclick="applyFilter('all',this)">전체</button>
+    ${hasMajor?`<button class='fbtn major-btn ${filterLeague==='major'?'active':''}" onclick="applyFilter('major',this)">⭐ 주요리그${majorN?` <span style='color:var(--gold2);font-size:.5rem'>${majorN}</span>`:""}</button>`:""}`;
   lgKeys.slice(0,10).forEach(lg => {
     const esc = lg.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
     const lN  = groups[lg].list.filter(isLive).length;
-    fhtml += `<button class="fbtn ${filterLeague===lg?"active":""}" onclick="applyFilter('${esc}',this)">${lg}${lN?` <span style="color:var(--red);font-size:.5rem">●</span>`:""}</button>`;
+    fhtml += `<button class="fbtn ${filterLeague===lg?'active':''}" onclick="applyFilter('${esc}',this)">${lg}${lN?` <span style='color:var(--red);font-size:.5rem'>●</span>`:''}</button>`;
   });
   fhtml += `</div>`;
 
@@ -732,11 +732,11 @@ function lsRender(games, key, s) {
 
     html += `<div class="league-sec">
       <div class="league-hd" onclick="toggleSec(this)">
-        ${flag?`<img class="country-flag" src="${flag}" onerror="this.style.display='none'">`:
+        ${flag?`<img class='country-flag' src='${flag}" onerror="this.style.display='none'">`:
           logo?`<img class="league-logo" src="${logo}" onerror="this.style.display='none'">`:""}
         <span class="league-nm">${s.icon} ${lg}</span>
-        ${groups[lg]?.major?`<span style="font-family:'DM Mono',monospace;font-size:.46rem;color:var(--gold2);opacity:.7">⭐</span>`:""}
-        ${lN?`<span class="league-live-pill">LIVE ${lN}</span>`:""}
+        ${groups[lg]?.major?`<span style='font-family:'DM Mono',monospace;font-size:.46rem;color:var(--gold2);opacity:.7'>⭐</span>`:''}
+        ${lN?`<span class='league-live-pill'>LIVE ${lN}</span>`:""}
         <span class="league-cnt">${list.length}경기</span>
         <span class="lg-tog open">▾</span>
       </div>
@@ -750,34 +750,34 @@ function lsRender(games, key, s) {
       if(n.status==="HT") {
         stCell=`<div class="c-st"><span class="st-ht">HT</span></div>`;
       } else if(live) {
-        stCell=`<div class="c-st"><span class="st-live">● LIVE</span><span class="st-min">${n.elapsed||""}</span></div>`;
+        stCell=`<div class="c-st"><span class="st-live">● LIVE</span><span class="st-min">${n.elapsed||''}</span></div>`;
       } else if(done) {
         stCell=`<div class="c-st"><span class="st-done">종료</span></div>`;
       } else {
-        stCell=`<div class="c-st"><span class="st-sched">${n.elapsed||"예정"}</span></div>`;
+        stCell=`<div class="c-st"><span class="st-sched">${n.elapsed||'예정'}</span></div>`;
       }
 
       // 골 이벤트
       const goals = (n.events||[]).filter(e=>e.type==="Goal").slice(-2);
       let evHtml = `<div class="c-ev">`;
       goals.forEach(e => {
-        evHtml += `<div class="ev-item goal">⚽ ${(e.player?.name||"").split(" ").pop()} ${e.time?.elapsed||""}′</div>`;
+        evHtml += `<div class="ev-item goal">⚽ ${(e.player?.name||'').split(' ').pop()} ${e.time?.elapsed||''}′</div>`;
       });
       evHtml += `</div>`;
 
-      html += `<div class="match-row${live?" live":""}${done?" done":""}">
+      html += `<div class="match-row${live?' live':''}${done?' done':''}">
         ${stCell}
         <div class="c-home">
-          ${n.homeLogo?`<img class="team-logo" src="${n.homeLogo}" onerror="this.style.display='none'">`:""}
+          ${n.homeLogo?`<img class='team-logo' src='${n.homeLogo}" onerror="this.style.display='none'">`:""}
           <span class="t-name">${n.homeName}</span>
         </div>
         <div class="c-sc">
-          <span class="sc-main${live?" live":""}">${n.hg} : ${n.ag}</span>
-          ${n.ht&&live?`<span class="sc-sub">HT ${n.ht}</span>`:""}
+          <span class="sc-main${live?' live':''}">${n.hg} : ${n.ag}</span>
+          ${n.ht&&live?`<span class='sc-sub'>HT ${n.ht}</span>`:""}
         </div>
         <div class="c-away">
           <span class="t-name">${n.awayName}</span>
-          ${n.awayLogo?`<img class="team-logo" src="${n.awayLogo}" onerror="this.style.display='none'">`:""}
+          ${n.awayLogo?`<img class='team-logo' src='${n.awayLogo}" onerror="this.style.display='none'">`:""}
         </div>
         ${evHtml}
       </div>`;
@@ -1211,7 +1211,7 @@ function oRender() {
         <div class="league-section-header">
           <span class="league-flag">${g.live ? '🔴' : '🏆'}</span>
           <span>${lg}</span>
-          ${g.live ? '<span style="font-size:10px;color:var(--red);margin-left:6px">LIVE</span>' : ''}
+          ${g.live ? '<span style='font-size:10px;color:var(--red);margin-left:6px'>LIVE</span>' : ''}
         </div>
         ${g.items.map(oCard).join('')}
       </div>`).join('');
@@ -1235,7 +1235,7 @@ function oCard(f) {
           <div class="odds-label">${i===0?'홈':i===runners.length-1?'원정':'무'}</div>
           <div class="odds-value">${p(r)?.toFixed(2)||'-'}</div>
         </div>`).join('')}
-      ${susp ? '<div style="font-size:9px;color:var(--red);text-align:center;margin-top:2px">⏸ 중단</div>' : ''}
+      ${susp ? '<div style='font-size:9px;color:var(--red);text-align:center;margin-top:2px'>⏸ 중단</div>' : ''}
     </div>`;
   }
 
@@ -1251,14 +1251,14 @@ function oCard(f) {
         <div class="match-teams">
           <div class="team-row">
             <span class="team-name">${f.home}</span>
-            ${f.isLive ? `<span class="team-score">${f.homeScore||0}</span>` : ''}
+            ${f.isLive ? `<span class='team-score'>${f.homeScore||0}</span>` : ''}
           </div>
           <div class="team-row">
             <span class="team-name" style="color:var(--text2)">${f.away}</span>
-            ${f.isLive ? `<span class="team-score">${f.awayScore||0}</span>` : ''}
+            ${f.isLive ? `<span class='team-score'>${f.awayScore||0}</span>` : ''}
           </div>
         </div>
-        ${f.venue ? `<div style="font-size:9px;color:var(--text3);margin-top:2px">📍 ${f.venue}</div>` : ''}
+        ${f.venue ? `<div style='font-size:9px;color:var(--text3);margin-top:2px'>📍 ${f.venue}</div>` : ''}
       </div>
       ${oddsHtml}
       <div class="odds-cell"><div class="odds-cell-label">핸디캡</div><div style="text-align:center;color:var(--text3);font-size:11px;padding:12px">-</div></div>
@@ -1298,7 +1298,7 @@ function oDetail(eid) {
                 </div>`).join('')}
             </div>`
           : '<div style="color:var(--text3);text-align:center;padding:20px">배당 없음</div>'}
-        ${f.venue ? `<div style="margin-top:10px;font-size:10px;color:var(--text3)">📍 ${f.venue}</div>` : ''}
+        ${f.venue ? `<div style='margin-top:10px;font-size:10px;color:var(--text3)'>📍 ${f.venue}</div>` : ''}
       </div>
     </div>`);
 }
@@ -1679,7 +1679,7 @@ function renderAnalysis(d) {
 
       <div class="prob-bar-track">
         <div class="pb-h" style="width:${d.hp}%"></div>
-        ${d.dp > 0 ? `<div class="pb-d" style="width:${d.dp}%"></div>` : ''}
+        ${d.dp > 0 ? `<div class='pb-d' style='width:${d.dp}%"></div>` : ''}
         <div class="pb-a" style="width:${d.ap}%"></div>
       </div>
 
@@ -1688,7 +1688,7 @@ function renderAnalysis(d) {
       <div class="ai-body" id="ai-txt-${SP}">${d.txt}</div>
 
       <div class="metrics" style="margin-bottom:12px">
-        ${d.mets.map(m=>`<div class="met"><span class="met-val ${m.c}">${m.v}</span><span class="met-key">${m.k}</span></div>`).join('')}
+        ${d.mets.map(m=>`<div class='met'><span class='met-val ${m.c}">${m.v}</span><span class="met-key">${m.k}</span></div>`).join('')}
       </div>
 
       <div class="ai-pick">
@@ -1704,14 +1704,14 @@ function renderAnalysis(d) {
       <div class="card">
         <div class="card-hd">
           <span class="card-title">${d.home} 최근 폼</span>
-          <div class="form-row">${d.form.map(f=>`<div class="fd fd-${f.toLowerCase()}">${f}</div>`).join('')}</div>
+          <div class="form-row">${d.form.map(f=>`<div class='fd fd-${f.toLowerCase()}">${f}</div>`).join('')}</div>
         </div>
         <div class="card-bd">
           ${d.results.map(r=>`
           <div class="result-row">
             <span class="r-teams">${r.h} vs ${r.a}</span>
             <span class="r-score">${r.hs} - ${r.as}</span>
-            ${r.hx ? `<span class="r-xg">xG ${r.hx}:${r.ax}</span>` : '<span></span>'}
+            ${r.hx ? `<span class='r-xg'>xG ${r.hx}:${r.ax}</span>` : '<span></span>'}
             <span class="r-res r-${r.r.toLowerCase()}">${r.r}</span>
           </div>`).join('')}
         </div>
@@ -1759,7 +1759,7 @@ function renderOdds(d) {
             <span class="odds-bm-name">${o.bm}</span>
             <div class="odds-cells">
               <span class="oc h">${o.o1?.toFixed(2)||'-'}</span>
-              ${o.oX !== null ? `<span class="oc d">${o.oX?.toFixed(2)||'-'}</span>` : ''}
+              ${o.oX !== null ? `<span class='oc d'>${o.oX?.toFixed(2)||'-'}</span>` : ''}
               <span class="oc a">${o.o2?.toFixed(2)||'-'}</span>
             </div>
           </div>`).join('')}
@@ -1774,7 +1774,7 @@ function renderOdds(d) {
         <div class="card-hd"><span class="card-title">핵심 지표</span></div>
         <div class="card-bd">
           <div class="metrics" style="margin-bottom:14px">
-            ${d.mets.map(m=>`<div class="met"><span class="met-val ${m.c}">${m.v}</span><span class="met-key">${m.k}</span></div>`).join('')}
+            ${d.mets.map(m=>`<div class='met'><span class='met-val ${m.c}">${m.v}</span><span class="met-key">${m.k}</span></div>`).join('')}
           </div>
           <div class="ai-pick">
             <span class="ai-pick-ico">✅</span>
@@ -1839,7 +1839,7 @@ function renderLineup(d) {
       <span class="lu-no">${p.no}</span>
       <span class="lu-name">${p.n}</span>
       <span class="lu-pos ${posClass(p.p)}">${posLabel(p.p)}</span>
-      ${p.r ? `<span class="lu-rtg">${p.r}</span>` : ''}
+      ${p.r ? `<span class='lu-rtg'>${p.r}</span>` : ''}
     </div>`).join('');
 
   return `
@@ -1880,14 +1880,14 @@ function renderResults(d) {
       <div class="card">
         <div class="card-hd">
           <span class="card-title">${d.home} 최근 5경기</span>
-          <div class="form-row">${d.form.map(f=>`<div class="fd fd-${f.toLowerCase()}">${f}</div>`).join('')}</div>
+          <div class="form-row">${d.form.map(f=>`<div class='fd fd-${f.toLowerCase()}">${f}</div>`).join('')}</div>
         </div>
         <div class="card-bd">
           ${d.results.map(r=>`
           <div class="result-row">
             <span class="r-teams">${r.h} vs ${r.a}</span>
             <span class="r-score">${r.hs} - ${r.as}</span>
-            ${r.hx ? `<span class="r-xg">xG ${r.hx}:${r.ax}</span>` : '<span></span>'}
+            ${r.hx ? `<span class='r-xg'>xG ${r.hx}:${r.ax}</span>` : '<span></span>'}
             <span class="r-res r-${r.r.toLowerCase()}">${r.r}</span>
           </div>`).join('')}
         </div>
@@ -1896,7 +1896,7 @@ function renderResults(d) {
         <div class="card-hd"><span class="card-title">시즌 핵심 지표</span></div>
         <div class="card-bd">
           <div class="metrics">
-            ${d.mets.map(m=>`<div class="met"><span class="met-val ${m.c}">${m.v}</span><span class="met-key">${m.k}</span></div>`).join('')}
+            ${d.mets.map(m=>`<div class='met'><span class='met-val ${m.c}">${m.v}</span><span class="met-key">${m.k}</span></div>`).join('')}
           </div>
         </div>
       </div>
@@ -1927,7 +1927,7 @@ function renderH2H(d) {
         <div class="result-row">
           <span class="r-teams">${r.h} vs ${r.a}</span>
           <span class="r-score">${r.hs} - ${r.as}</span>
-          ${r.hx ? `<span class="r-xg">xG ${r.hx}:${r.ax}</span>` : '<span></span>'}
+          ${r.hx ? `<span class='r-xg'>xG ${r.hx}:${r.ax}</span>` : '<span></span>'}
           <span class="r-res r-${r.r.toLowerCase()}">${r.r}</span>
         </div>`).join('')}
       </div>
@@ -1972,11 +1972,11 @@ function renderRefs() {
               ${cat.items.map(r => `
               <a href="${r.url}" target="_blank" class="ref-card ref-${r.cat}">
                 <span class="ref-arrow">↗</span>
-                <div class="ref-ico">${r.ico} ${r.key ? '<span style="font-size:0.6rem;color:var(--gold)">★</span>' : ''}</div>
+                <div class="ref-ico">${r.ico} ${r.key ? '<span style='font-size:0.6rem;color:var(--gold)'>★</span>' : ''}</div>
                 <div class="ref-name">${r.n}</div>
                 <div class="ref-desc">${r.desc}</div>
                 <div class="ref-tags">
-                  ${r.tags.map((t,i)=>`<span class="ref-tag${i===0&&r.key?' featured':''}">${t}</span>`).join('')}
+                  ${r.tags.map((t,i)=>`<span class='ref-tag${i===0&&r.key?' featured':''}">${t}</span>`).join('')}
                 </div>
               </a>`).join('')}
             </div>`;
