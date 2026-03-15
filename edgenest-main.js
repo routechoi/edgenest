@@ -1244,7 +1244,7 @@ const FB_HOST     = 'free-api-live-football-data.p.rapidapi.com';
 const CLAUDE_VER  = 'claude-sonnet-4-20250514';
 /* ── 상태 ── */
 let SP  = 'soccer';
-let SUB = 'analysis';   // ← 여기만 남기고, `let cache = {};`는 삭제됨
+let SUB = 'analysis';
 /* ── 서브탭 정의 ── */
 const SUBS = {
   soccer:     [{id:'analysis',l:'🤖 AI분석'},{id:'odds',l:'💰 배당률'},{id:'stats',l:'팀통계'},{id:'lineup',l:'선발라인업'},{id:'results',l:'최근결과'},{id:'h2h',l:'H2H'}],
