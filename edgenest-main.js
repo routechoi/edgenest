@@ -1,15 +1,12 @@
 /* ── 블록1 ─────────────────────────────── */
 //<![CDATA[
-
 // ── 공통 상태 ──
 const PANES = { home:true, ls:false, odds:false, an:false };
-
 function switchPane(id) {
   // 모든 패널 숨기기
   document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
   const paneId = id === 'an' ? 'pane-analysis' : 'pane-' + id;
   document.getElementById(paneId).classList.add('active');
-
   // GNB 활성 표시
   ['ls','odds','an'].forEach(k => {
     const el = document.getElementById('gnb-' + k);
@@ -17,7 +14,6 @@ function switchPane(id) {
     el.classList.remove('active-ls','active-odds','active-an');
     if (k === id) el.classList.add('active-' + k);
   });
-
   // 섹션 내 네비 활성
   document.querySelectorAll('.sec-nav-btn').forEach(b => b.classList.remove('sec-nav-active'));
   const pane = document.getElementById(paneId);
@@ -27,7 +23,6 @@ function switchPane(id) {
     const idx = map[id];
     if (btns[idx]) btns[idx].classList.add('sec-nav-active');
   }
-
   // 최초 진입 시 초기화
   if (!PANES[id]) {
     PANES[id] = true;
@@ -35,10 +30,8 @@ function switchPane(id) {
     if (id === 'odds')  initOdds();
     if (id === 'an')    initAnalysis();
   }
-
   window.scrollTo(0, 0);
 }
-
 // 시계
 (function tick() {
   const n = new Date();
@@ -50,18 +43,13 @@ function switchPane(id) {
   if (el2) el2.textContent = t;
   setTimeout(tick, 1000);
 })();
-
 // 홈 배당 업데이트 시각
 document.getElementById('s-odds').textContent =
   new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
-
 // 홈 LIVE 표시 — API 콜 절약을 위해 라이브스코어 섹션 진입 후 반영
 // (홈 자동 콜 제거 — 100콜/일 한도 절약)
-
 /* ── 블록2 ─────────────────────────────── */
 //<![CDATA[
-
-
 /* ═══════════════════════════════════════════════════════
    API-Sports — 영구 무료 100콜/일
    키: 1669e40954b2071b87590108078b5f05
@@ -78,17 +66,14 @@ document.getElementById('s-odds').textContent =
    
    헤더: x-apisports-key
 ═══════════════════════════════════════════════════════ */
-
 const KEY = "1669e40954b2071b87590108078b5f05";
 const HDR = { "x-apisports-key": KEY };
-
 // 오늘 날짜 (UTC 기준)
 // KST 기준 오늘 날짜 (UTC+9)
 function today() {
   const kst = new Date(Date.now() + 9 * 3600 * 1000);
   return kst.toISOString().slice(0, 10);
 }
-
 // UTC → KST 24시간 포맷 (예정 경기 시간 표시용)
 function toKST(raw) {
   if (!raw) return null;
@@ -104,8 +89,6 @@ function toKST(raw) {
     return `${hh}:${mm}`;
   } catch(e) { return null; }
 }
-
-
 // ═══════════════════════════════════════════════════════
 // 스포츠토토 대상 리그 화이트리스트
 // api-sports.io league ID 기준
@@ -123,7 +106,6 @@ const TOTO_LEAGUES = {
   golf:       [1, 2, 3],
   // PGA=1, DP World=2, LPGA=3
 };
-
 // Sportsradar competitionId 화이트리스트 (inplayEvents 필터용)
 // inplayEvents에서 확인된 실제 ID값 기반 — 이름으로도 2차 검증
 const SR_TOTO_COMPETITIONS = new Set([
@@ -147,7 +129,6 @@ const SR_TOTO_COMPETITIONS = new Set([
   'sr:tournament:1',    // V리그 (야구 1과 충돌 — 종목 구분으로 처리)
   'sr:tournament:2',
 ]);
-
 // 이름 기반 스포츠토토 리그 매칭 (competitionId 미확인 보조수단)
 const SR_TOTO_NAMES = [
   'Premier League', 'La Liga', 'Bundesliga', 'Serie A', 'Ligue 1',
@@ -157,13 +138,11 @@ const SR_TOTO_NAMES = [
   'V-League', 'V League',
   'PGA Tour', 'LPGA',
 ];
-
 function isTotoCompetition(ev) {
   if (SR_TOTO_COMPETITIONS.has(ev.competitionId)) return true;
   const name = (ev.competitionName || '').toLowerCase();
   return SR_TOTO_NAMES.some(n => name.includes(n.toLowerCase()));
 }
-
 const SPORTS = [
   {
     key:"football",   icon:"⚽", label:"축구",
@@ -351,26 +330,21 @@ const SPORTS = [
     })
   }
 ];
-
 // 상태 판별
 const LIVE_SET = new Set(["1H","2H","HT","ET","BT","P","INT","LIVE","Q1","Q2","Q3","Q4","OT","INPLAY","IP","NS_Live","STARTED","Playing","In Play","In Progress","Live"]);
 const DONE_SET = new Set(["FT","AET","PEN","FIN","AOT","Finished","FT_PEN","After Extra Time","After Penalties","Finished OT","NS_FIN","FINAL","Ended","Complete","Cancelled"]);
-
 function isLive(n) { return LIVE_SET.has(n.status); }
 function isDone(n) { return DONE_SET.has(n.status); }
-
 let current     = "all";
 let cache       = {};
 let lastFetch   = {};
 let filterLeague = "all";
 let callCount   = 0;
-
 /* ─── 탭 생성 ─── */
 function buildTabs() {
   const wrap = document.getElementById("tab-inner");
   if(!wrap) return;
   wrap.innerHTML = "";
-
   // 전체 탭 (맨 앞)
   const allBtn = document.createElement("button");
   allBtn.className = "tab-btn" + (current==="all" ? " active" : "");
@@ -378,11 +352,9 @@ function buildTabs() {
   allBtn.innerHTML = `🌐 전체<span class="tab-cnt" id="tc-all">—</span>`;
   allBtn.onclick = () => switchTab("all", allBtn);
   wrap.appendChild(allBtn);
-
   // 종목별 탭 (hidden 제외)
   const VISIBLE_ORDER = ["football","basketball","nba","baseball","volleyball","golf"];
   const visibleSports = VISIBLE_ORDER.map(k => SPORTS.find(s => s.key===k)).filter(Boolean);
-
   visibleSports.forEach(s => {
     const btn = document.createElement("button");
     btn.className = "tab-btn" + (s.key===current?" active":"");
@@ -392,11 +364,9 @@ function buildTabs() {
     wrap.appendChild(btn);
   });
 }
-
 /* ─── 데이터 로드 ─── */
 async function loadSport(key) {
   const area = document.getElementById("content-area");
-
   // 전체 탭: 표시 종목 전부 병렬 로드 후 시간순 합산
   if (key === "all") {
     area.innerHTML = `<div class="state-box"><div class="spinner"></div><div class="state-msg">🌐 실시간 경기 데이터 로딩중...<br><small style="font-size:.55rem;color:var(--t3)">API-Sports 연결 중</small></div></div>`;
@@ -414,15 +384,12 @@ async function loadSport(key) {
     renderAll();
     return;
   }
-
   await loadSportSingle(key);
 }
-
 async function loadSportSingle(key) {
   const area = document.getElementById("content-area");
   const s = SPORTS.find(x=>x.key===key);
   if(!s) return;
-
   // 데모 모드
   if (lsMode === 'demo') {
     const SPORT_ICON = { football:"⚽", basketball:"🏀", nba:"🏀", baseball:"⚾", volleyball:"🏐", golf:"⛳" };
@@ -432,36 +399,28 @@ async function loadSportSingle(key) {
     if (current === key) lsRender(games, key, s);
     return;
   }
-
   if (current === key) {
     area.innerHTML = `<div class="state-box"><div class="spinner"></div><div class="state-msg">${s.icon} ${s.label} 데이터 로딩중...</div></div>`;
   }
-
   try {
     const ep  = s.buildEP();
     const url = s.url + ep;
     const r   = await fetch(url, { headers: HDR });
-
     callCount++;
     updateQuota(r);
-
     if(!r.ok) throw new Error(`HTTP ${r.status}`);
     const d = await r.json();
-
     if(d.errors) {
       const errs = Object.values(d.errors);
       if(errs.length) throw new Error(errs[0]);
     }
-
     let games = (d.response || []).map(g => s.parse(g));
-
     // 스포츠토토 리그 필터링
     if (s.totoFilter && TOTO_LEAGUES[key]) {
       const allowed = new Set(TOTO_LEAGUES[key]);
       games = games.filter(g => allowed.has(g.leagueId));
       console.log(`[LS] ${key} 토토필터 적용: ${games.length}경기`);
     }
-
     // 축구: live=all에서 0건이면 오늘 예정 경기 병렬 조회 (EPL+K리그만, 2콜)
     if (key === 'football' && games.length === 0) {
       console.log('[LS] 축구 라이브 없음 → 오늘 예정 경기 병렬 조회');
@@ -479,10 +438,8 @@ async function loadSportSingle(key) {
         console.log(`[LS] 축구 예정 경기 보충: ${games.length}경기`);
       } catch(e2) { console.warn('[LS] 축구 보충 실패:', e2.message); }
     }
-
     cache[key] = games;
     lastFetch[key] = Date.now();
-
     // 탭 카운트
     const liveN = games.filter(isLive).length;
     const tc = document.getElementById(`tc-${key}`);
@@ -490,13 +447,11 @@ async function loadSportSingle(key) {
       tc.textContent = liveN || games.length || "0";
       tc.className = "tab-cnt" + (liveN>0?" on":"");
     }
-
     // 전체탭이면 renderAll에서 처리하므로 개별 렌더 스킵
     if (current !== "all") {
       lsRender(games, key, s);
       updateTs();
     }
-
   } catch(e) {
     console.warn('[LS]', key, '실패:', e.message);
     if (!cache[key]) cache[key] = [];
@@ -505,14 +460,11 @@ async function loadSportSingle(key) {
     }
   }
 }
-
-
 function renderAllDemo() {
   const area = document.getElementById("content-area");
   const live  = LS_DEMO.filter(g => ["1H","2H","Q1","Q2","Q3","Q4","1회","2회","3회","4회","5회","1세트","2세트","3세트","4세트","5세트"].includes(g.status));
   const done  = LS_DEMO.filter(g => g.status === "FT");
   const sched = LS_DEMO.filter(g => g.status === "NS");
-
   const statsHtml = `
     <div class="sum-row">
       <div class="sum-item"><span class="sum-val g">${live.length}</span><span class="sum-lbl">LIVE</span></div>
@@ -524,7 +476,6 @@ function renderAllDemo() {
       <span class="upd-time" id="upd-label">데모 데이터 · ${nowStr()}</span>
       <button class="btn-ref" onclick="reload()">↻ 새로고침</button>
     </div>`;
-
   const sorted = [...live, ...sched, ...done];
   let rows = '';
   sorted.forEach(n => {
@@ -543,18 +494,15 @@ function renderAllDemo() {
       <div class="c-ev"><span style="font-size:.5rem;color:var(--t3)">${n.leagueName}</span></div>
     </div>`;
   });
-
   area.innerHTML = statsHtml + `<div class="match-list">${rows}</div>`;
   const tc = document.getElementById("tc-all");
   if(tc) { tc.textContent = live.length || LS_DEMO.length; tc.className = "tab-cnt"+(live.length>0?" on":""); }
 }
-
 // 전체 탭: 모든 캐시 합산해서 시간순 렌더
 function renderAll() {
   const area = document.getElementById("content-area");
   const ALL_KEYS = ["football","basketball","nba","baseball","volleyball"];
   let allGames = [];
-
   ALL_KEYS.forEach(k => {
     const s = SPORTS.find(x=>x.key===k);
     if (!s || !cache[k]) return;
@@ -562,24 +510,20 @@ function renderAll() {
       allGames.push({ ...g, _sport: s });
     });
   });
-
   if (!allGames.length) {
     // 실제 데이터 없으면 데모로 fallback
     renderAllDemo();
     return;
   }
-
   // LIVE 먼저, 그 다음 예정 시간순
   allGames.sort((a, b) => {
     const aLive = isLive(a) ? 0 : 1;
     const bLive = isLive(b) ? 0 : 1;
     return aLive - bLive;
   });
-
   const liveN  = allGames.filter(isLive).length;
   const doneN  = allGames.filter(isDone).length;
   const schedN = allGames.length - liveN - doneN;
-
   const statsHtml = `
     <div class="sum-row">
       <div class="sum-item"><span class="sum-val g">${liveN}</span><span class="sum-lbl">LIVE</span></div>
@@ -592,7 +536,6 @@ function renderAll() {
       <button class="btn-ref" onclick="reload()">↻ 새로고침</button>
     </div>`;
   let html = '';
-
   allGames.forEach(n => {
     const s = n._sport;
     const live = isLive(n);
@@ -613,7 +556,6 @@ function renderAll() {
       evHtml += `<div class="ev-item goal">⚽ ${(e.player?.name||'').split(' ').pop()} ${e.time?.elapsed||''}′</div>`;
     });
     evHtml += `</div>`;
-
     html += `<div class="match-row${live?' live':''}${done?' done':''}">
       ${stCell}
       <div class="c-home">
@@ -631,16 +573,13 @@ function renderAll() {
       ${evHtml}
     </div>`;
   });
-
   // 렌더링
   area.innerHTML = statsHtml + `<div class="match-list">${html}</div>`;
-
   // 탭 카운트 업데이트
   const tc = document.getElementById("tc-all");
   if(tc) { tc.textContent = liveN > 0 ? liveN : allGames.length; tc.className = "tab-cnt" + (liveN>0?" on":""); }
   updateTs();
 }
-
 function updateQuota(r) {
   const rem = r.headers.get("x-ratelimit-requests-remaining");
   const lim = r.headers.get("x-ratelimit-requests-limit");
@@ -649,12 +588,10 @@ function updateQuota(r) {
     if(el) el.textContent = `API-Sports · 오늘 남은 콜: ${rem}/${lim||100}`;
   }
 }
-
 /* ─── 렌더 ─── */
 function lsRender(games, key, s) {
   const area = document.getElementById("content-area");
   if(!area) return;
-
   if(!games?.length) {
     area.innerHTML = `<div class="state-box">
       <div class="state-msg">${s.icon} 오늘 ${s.label} 경기 데이터가 없습니다.<br>
@@ -662,7 +599,6 @@ function lsRender(games, key, s) {
       </div></div>`;
     return;
   }
-
   // 주요 리그
   const MAJOR = new Set([
     "K League 1","K League 2","K3 League","FA Cup","Korean FA Cup",
@@ -675,7 +611,6 @@ function lsRender(games, key, s) {
     "AFC Champions League","AFC Cup","Asian Cup","World Cup",
     "NBA","EuroLeague","KBL","KBO","NPB","MLB","V-League Men","V-League Women",
   ]);
-
   // 리그 그룹
   const groups = {};
   games.forEach(n => {
@@ -683,12 +618,10 @@ function lsRender(games, key, s) {
     if(!groups[lg]) groups[lg] = { logo:n.leagueLogo, flag:n.countryFlag, list:[], major: MAJOR.has(lg) };
     groups[lg].list.push(n);
   });
-
   const liveN  = games.filter(isLive).length;
   const doneN  = games.filter(isDone).length;
   const schedN = games.length - liveN - doneN;
   const majorN = games.filter(n => MAJOR.has(n.leagueName)).length;
-
   // 정렬: 주요리그 LIVE → 주요리그 기타 → 나머지 LIVE → 나머지
   const lgKeys = Object.keys(groups).sort((a,b) => {
     const ag = groups[a], bg = groups[b];
@@ -700,7 +633,6 @@ function lsRender(games, key, s) {
   const filtered = filterLeague==="all"   ? lgKeys
     : filterLeague==="major" ? lgKeys.filter(k=>groups[k].major)
     : lgKeys.filter(k=>k===filterLeague);
-
   // 필터
   const hasMajor = lgKeys.some(k=>groups[k].major);
   let fhtml = `<div class="filter-row"><span class="filter-lbl">리그</span>
@@ -712,7 +644,6 @@ function lsRender(games, key, s) {
     fhtml += `<button class="fbtn ${filterLeague===lg?'active':''}" onclick="applyFilter('${esc}',this)">${lg}${lN?` <span style='color:var(--red);font-size:.5rem'>●</span>`:''}</button>`;
   });
   fhtml += `</div>`;
-
   let html = `
     <div class="sum-row">
       <div class="sum-item"><span class="sum-val g">${liveN}</span><span class="sum-lbl">LIVE</span></div>
@@ -725,11 +656,9 @@ function lsRender(games, key, s) {
       <span class="upd-time" id="upd-label">업데이트: ${nowStr()}</span>
       <button class="btn-ref" onclick="reload()">↻ 새로고침</button>
     </div>`;
-
   filtered.forEach(lg => {
     const { logo, flag, list } = groups[lg];
     const lN = list.filter(isLive).length;
-
     html += `<div class="league-sec">
       <div class="league-hd" onclick="toggleSec(this)">
         ${flag?`<img class='country-flag' src="${flag}" onerror="this.style.display='none'">`:
@@ -741,11 +670,9 @@ function lsRender(games, key, s) {
         <span class="lg-tog open">▾</span>
       </div>
       <div class="match-list">`;
-
     list.forEach(n => {
       const live = isLive(n);
       const done = isDone(n);
-
       let stCell;
       if(n.status==="HT") {
         stCell=`<div class="c-st"><span class="st-ht">HT</span></div>`;
@@ -756,7 +683,6 @@ function lsRender(games, key, s) {
       } else {
         stCell=`<div class="c-st"><span class="st-sched">${n.elapsed||'예정'}</span></div>`;
       }
-
       // 골 이벤트
       const goals = (n.events||[]).filter(e=>e.type==="Goal").slice(-2);
       let evHtml = `<div class="c-ev">`;
@@ -764,7 +690,6 @@ function lsRender(games, key, s) {
         evHtml += `<div class="ev-item goal">⚽ ${(e.player?.name||'').split(' ').pop()} ${e.time?.elapsed||''}′</div>`;
       });
       evHtml += `</div>`;
-
       html += `<div class="match-row${live?' live':''}${done?' done':''}">
         ${stCell}
         <div class="c-home">
@@ -784,10 +709,8 @@ function lsRender(games, key, s) {
     });
     html += `</div></div>`;
   });
-
   area.innerHTML = html;
 }
-
 /* ─── 유틸 ─── */
 function switchTab(key, btn) {
   document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
@@ -802,25 +725,21 @@ function switchTab(key, btn) {
     loadSport(key);
   }
 }
-
 function applyFilter(lg, btn) {
   filterLeague = lg;
   document.querySelectorAll(".fbtn").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
   if(cache[current]) lsRender(cache[current], current, SPORTS.find(x=>x.key===current));
 }
-
 function toggleSec(hd) {
   const list=hd.nextElementSibling, tog=hd.querySelector(".lg-tog");
   const open=list.style.display!=="none";
   list.style.display=open?"none":"";
   tog.classList.toggle("open",!open);
 }
-
 function nowStr() {
   const _n=new Date(); return `${String(_n.getHours()).padStart(2,'0')}:${String(_n.getMinutes()).padStart(2,'0')}:${String(_n.getSeconds()).padStart(2,'0')} KST`;
 }
-
 function updateTs() {
   const t = nowStr();
   ["global-upd","upd-label"].forEach(id=>{
@@ -828,22 +747,19 @@ function updateTs() {
     if(el) el.textContent=(id==="global-upd"?"마지막 갱신: ":"업데이트: ")+t;
   });
 }
-
 function reload() {
   delete cache[current];
   delete lastFetch[current];
   loadSport(current);
 }
-
-
 // ── 라이브스코어 데모 데이터 ──
 const LS_DEMO = [
   // 축구
-  { leagueName:"프리미어리그", leagueLogo:null, countryFlag:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", homeName:"맨체스터 시티", awayName:"아스날", hg:2, ag:1, status:"2H", elapsed:"67", ht:"1:0", events:[] },
+  { leagueName:"프리미어리그", leagueLogo:null, countryFlag:"🏴", homeName:"맨체스터 시티", awayName:"아스날", hg:2, ag:1, status:"2H", elapsed:"67", ht:"1:0", events:[] },
   { leagueName:"라리가", leagueLogo:null, countryFlag:"🇪🇸", homeName:"레알 마드리드", awayName:"바르셀로나", hg:1, ag:1, status:"2H", elapsed:"55", ht:"0:1", events:[] },
   { leagueName:"분데스리가", leagueLogo:null, countryFlag:"🇩🇪", homeName:"바이에른 뮌헨", awayName:"도르트문트", hg:3, ag:0, status:"FT", elapsed:null, ht:"2:0", events:[] },
   { leagueName:"K리그1", leagueLogo:null, countryFlag:"🇰🇷", homeName:"전북 현대", awayName:"울산 HD", hg:0, ag:0, status:"1H", elapsed:"23", ht:null, events:[] },
-  { leagueName:"프리미어리그", leagueLogo:null, countryFlag:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", homeName:"리버풀", awayName:"첼시", hg:0, ag:0, status:"NS", elapsed:"21:00", ht:null, events:[] },
+  { leagueName:"프리미어리그", leagueLogo:null, countryFlag:"🏴", homeName:"리버풀", awayName:"첼시", hg:0, ag:0, status:"NS", elapsed:"21:00", ht:null, events:[] },
   // 농구
   { leagueName:"NBA", leagueLogo:null, countryFlag:"🇺🇸", homeName:"LA 레이커스", awayName:"골든스테이트", hg:98, ag:102, status:"Q3", elapsed:"Q3 8:24", ht:"48:51", events:[], _sport:{icon:"🏀"} },
   { leagueName:"NBA", leagueLogo:null, countryFlag:"🇺🇸", homeName:"보스턴 셀틱스", awayName:"마이애미 히트", hg:0, ag:0, status:"NS", elapsed:"10:30", ht:null, events:[], _sport:{icon:"🏀"} },
@@ -854,9 +770,7 @@ const LS_DEMO = [
   // 배구
   { leagueName:"V리그 남자", leagueLogo:null, countryFlag:"🇰🇷", homeName:"현대캐피탈", awayName:"OK 저축은행", hg:2, ag:1, status:"4세트", elapsed:"4set", ht:null, events:[], _sport:{icon:"🏐"} },
 ];
-
 let lsMode = 'real'; // 'real' | 'demo'
-
 function setLsMode(mode) {
   lsMode = mode;
   document.getElementById('lsBtnReal').classList.toggle('active', mode === 'real');
@@ -865,7 +779,6 @@ function setLsMode(mode) {
   cache = {}; lastFetch = {};
   loadSport(current);
 }
-
 function initLivescore() {
   current = "all";
   buildTabs();
@@ -1329,12 +1242,9 @@ const RAPID_KEY   = '6a5d1ea245msh63d3ebd0b873de0p1da56bjsn370ddd7e5d58';
 const ODDS_HOST   = 'odds-api1.p.rapidapi.com';
 const FB_HOST     = 'free-api-live-football-data.p.rapidapi.com';
 const CLAUDE_VER  = 'claude-sonnet-4-20250514';
-
 /* ── 상태 ── */
 let SP  = 'soccer';
-let SUB = 'analysis';
-let cache = {};
-
+let SUB = 'analysis';   // ← 여기만 남기고, `let cache = {};`는 삭제됨
 /* ── 서브탭 정의 ── */
 const SUBS = {
   soccer:     [{id:'analysis',l:'🤖 AI분석'},{id:'odds',l:'💰 배당률'},{id:'stats',l:'팀통계'},{id:'lineup',l:'선발라인업'},{id:'results',l:'최근결과'},{id:'h2h',l:'H2H'}],
