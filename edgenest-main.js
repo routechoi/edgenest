@@ -1211,6 +1211,7 @@ function oDetail(eid) {
                 </div>`).join('')}
             </div>`
           : '<div style="color:var(--text3);text-align:center;padding:20px">배당 없음</div>'}
+        ${f.venue ? `<div style='margin-top:10px;font-size:10px;color:var(--text3)'>📍 ${f.venue}</div>` : ''}
       </div>
     </div>`);
 }
