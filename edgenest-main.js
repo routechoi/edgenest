@@ -105,13 +105,20 @@ function buildSportTabs(){
 function buildDateTabs(){
   var today=todayKST(),days=['일','월','화','수','목','금','토'];
   var seen={},dates=[];
-  OD.all.forEach(function(r){if(!seen[r.ymd]){seen[r.ymd]=true;dates.push(r.ymd);}});
+  OD.all.forEach(function(r){
+    var ymd=r.ymd||r.match_ymd||'';
+    if(ymd&&ymd.length>=8&&!seen[ymd]){seen[ymd]=true;dates.push(ymd);}
+  });
   dates.sort();
   var items=[{val:'all',label:'전체'}];
   dates.forEach(function(ymd){
-    var mm=parseInt(ymd.slice(4,6)),dd=parseInt(ymd.slice(6,8));
-    var day=days[new Date(+ymd.slice(0,4),mm-1,dd).getDay()];
-    items.push({val:ymd,label:mm+'/'+String(dd).padStart(2,'0')+'('+day+')'+(ymd===today?' 오늘':'')});
+    try {
+      if(!ymd||typeof ymd!=='string'||ymd.length<8) return;
+      var mm=parseInt(ymd.slice(4,6)),dd=parseInt(ymd.slice(6,8));
+      if(isNaN(mm)||isNaN(dd)) return;
+      var day=days[new Date(+ymd.slice(0,4),mm-1,dd).getDay()]||'?';
+      items.push({val:ymd,label:mm+'/'+String(dd).padStart(2,'0')+'('+day+')'+(ymd===today?' 오늘':'')});
+    } catch(e){}
   });
   buildTabs('od-date-tabs',items,OD.date,function(v){OD.date=v;});
 }
@@ -135,6 +142,7 @@ function buildGtTabs(){
 function odRender(){
   var today=todayKST();
   var rows=OD.all.filter(function(r){
+    if(!r.ymd||r.ymd.length<8) return false;
     if(OD.date!=='all'&&r.ymd!==OD.date) return false;
     if(OD.sport!=='all'&&r.sport!==OD.sport) return false;
     if(OD.prod!=='all'&&(r.prod||'').indexOf(OD.prod)===-1) return false;
@@ -223,7 +231,25 @@ function oddsLoad(){
     .then(function(r){return r.ok?r.json():Promise.reject('HTTP '+r.status);})
     .then(function(data){
       OD.meta=data.meta||{};
-      OD.all=(data.games||[]);
+      // Worker 필드명(match_ymd, match_tm) → 내부 필드명(ymd, hhmm) 변환
+      OD.all=(data.games||[]).map(function(g){
+        return {
+          row_num:g.row_num||0,
+          ymd:    g.match_ymd||g.ymd||'',
+          hhmm:   g.match_tm||g.hhmm||'0000',
+          sport:  g.sport||'',
+          league: g.league||'',
+          prod:   g.prod||'프로토',
+          gt:     g.gt||'일반',
+          hval:   g.hval||null,
+          home:   g.home||'',
+          away:   g.away||'',
+          o1:     g.o1||null,
+          oX:     g.oX||null,
+          o2:     g.o2||null,
+          matched:g.matched||false,
+        };
+      });
       buildSportTabs(); buildDateTabs(); buildProdTabs(); buildGtTabs();
       odRender();
     })
