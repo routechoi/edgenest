@@ -94,18 +94,24 @@ function buildSportTabs(){
 function buildDateTabs(){
   var wrap=document.getElementById('od-date-tabs'); if(!wrap) return;
   var today=todayKST(); var days=['일','월','화','수','목','금','토'];
-  var seen={},dates=[]; OD.all.forEach(function(r){ if(r.ymd>=today&&!seen[r.ymd]){seen[r.ymd]=true;dates.push(r.ymd);} }); dates.sort();
+  var seen={},dates=[];
+  OD.all.forEach(function(r){ if(r.ymd&&!seen[r.ymd]){seen[r.ymd]=true;dates.push(r.ymd);} });
+  dates.sort();
   wrap.innerHTML='';
-  function mk(label,val){
-    var b=document.createElement('button'); b.className='od-tab-btn'+(OD.date===val?' active':''); b.textContent=label;
+  function mk(label,val,isActive){
+    var b=document.createElement('button');
+    b.className='od-tab-btn'+(isActive?' active':'');
+    b.textContent=label;
     b.onclick=(function(v){ return function(){ OD.date=v; wrap.querySelectorAll('.od-tab-btn').forEach(function(x){x.classList.remove('active');}); this.classList.add('active'); odRender(); }; })(val);
     wrap.appendChild(b);
   }
-  mk('전체','all');
+  mk('전체','all',OD.date==='all');
   dates.forEach(function(ymd){
     var mm=parseInt(ymd.slice(4,6)),dd=parseInt(ymd.slice(6,8));
-    var day=days[new Date(+ymd.slice(0,4),mm-1,dd).getDay()]; var isToday=ymd===today;
-    mk(mm+'/'+String(dd).padStart(2,'0')+'('+day+')'+(isToday?' 오늘':''),ymd);
+    var day=days[new Date(+ymd.slice(0,4),mm-1,dd).getDay()];
+    var isToday=(ymd===today);
+    var label=mm+'/'+String(dd).padStart(2,'0')+'('+day+')'+(isToday?' 오늘':'');
+    mk(label,ymd,OD.date===ymd);
   });
 }
 
@@ -121,11 +127,9 @@ function buildProdTabs(){
 }
 
 function odRender(){
-  var today=todayKST(), nowStr=nowHHMM();
+  var today=todayKST();
 
   var rows=OD.all.filter(function(r){
-    if(r.ymd<today) return false;
-    if(r.ymd===today&&r.hhmm<nowStr) return false;
     if(OD.date!=='all'&&r.ymd!==OD.date) return false;
     if(OD.sport!=='all'&&r.sport!==OD.sport) return false;
     if(OD.prod!=='all'){
